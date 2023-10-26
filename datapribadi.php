@@ -1,37 +1,16 @@
 <?php
+$fp = fopen('datapribadi.csv', 'r');
+$headers = fgetcsv($fp); // Get column headers
 
-function csvToJson($csvUrl) {
-    $csvData = [];
-    
-    if (($handle = fopen($csvUrl, 'r')) !== false) {
-        while (($row = fgetcsv($handle)) !== false) {
-            $csvData[] = $row;
-        }
-        fclose($handle);
-    }
-
-    // Assuming the first row of the CSV contains the column headers
-    $headers = array_shift($csvData);
-
-    $jsonArray = [];
-
-    foreach ($csvData as $row) {
-        $jsonArrayItem = array([]);
-        for ($i ;
-            $jsonArrayItem[$headers[$i]] = $row[$i];
-        )
-        $jsonArray[] = $jsonArrayItem;
-    }
-
-    return json_encode($jsonArray);
+$data = array();
+while (($row = fgetcsv($fp)) !== false) {
+    $data[] = array_combine($headers, $row);
 }
+fclose($fp);
 
-$csvUrl = 'jasminneenf.alwaysdata.net/datapribadi.csv';
-$jsonData = csvToJson($csvUrl);
+$json = json_encode($data, JSON_PRETTY_PRINT);
 
-// Set the content type to JSON
 header('Content-Type: application/json');
 
-// Output the JSON data
-echo $jsonData;
+echo $json;
 ?>
